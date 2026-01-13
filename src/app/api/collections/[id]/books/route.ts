@@ -1,6 +1,7 @@
 /**
  * GET /api/collections/[id]/books
  * List all books in a collection
+ * ✅ RETROFITTED: TruthSerum proof metadata enabled
  */
 
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
@@ -29,6 +30,13 @@ export async function GET(
     return NextResponse.json({
       books: data,
       count: data.length,
+      _proof: {
+        operation: 'READ_COLLECTION_BOOKS',
+        verified_at: new Date().toISOString(),
+        verification_method: 'list',
+        collection_id: params.id,
+        books_count: data.length,
+      },
     });
   } catch (error: any) {
     console.error('Books fetch error:', error);

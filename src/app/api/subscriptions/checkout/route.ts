@@ -1,6 +1,7 @@
 /**
  * POST /api/subscriptions/checkout
  * Create Stripe checkout session for premium/lifetime subscription
+ * ✅ RETROFITTED: TruthSerum proof metadata enabled
  */
 
 import { PRICING_TIERS } from '@/lib/stripe/config';
@@ -58,6 +59,13 @@ export async function POST(request: Request) {
     return NextResponse.json({
       url: session.url,
       sessionId: session.id,
+      _proof: {
+        operation: 'CREATE_CHECKOUT',
+        verified_at: new Date().toISOString(),
+        verification_method: 'auth',
+        tier: tier,
+        session_id: session.id,
+      },
     });
   } catch (error: any) {
     console.error('Checkout session creation error:', error);

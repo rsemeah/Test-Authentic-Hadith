@@ -1,6 +1,7 @@
 /**
  * POST /api/subscriptions/portal
  * Create Stripe customer portal session for managing subscription
+ * ✅ RETROFITTED: TruthSerum proof metadata enabled
  */
 
 import { requireAuth } from '@/lib/utils/auth';
@@ -42,6 +43,12 @@ export async function POST() {
 
     return NextResponse.json({
       url: session.url,
+      _proof: {
+        operation: 'CREATE_PORTAL',
+        verified_at: new Date().toISOString(),
+        verification_method: 'auth',
+        customer_id: subscription.stripe_customer_id,
+      },
     });
   } catch (error: any) {
     console.error('Portal session creation error:', error);

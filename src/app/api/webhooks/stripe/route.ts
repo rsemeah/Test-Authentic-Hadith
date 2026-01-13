@@ -2,6 +2,7 @@
  * POST /api/webhooks/stripe
  * Handle Stripe webhook events
  * CRITICAL: Must verify webhook signature
+ * ✅ RETROFITTED: TruthSerum proof metadata enabled
  */
 
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
@@ -125,7 +126,16 @@ export async function POST(request: Request) {
         console.log(`Unhandled event type: ${event.type}`);
     }
 
-    return NextResponse.json({ received: true });
+    return NextResponse.json({ 
+      received: true,
+      _proof: {
+        operation: 'WEBHOOK_STRIPE',
+        verified_at: new Date().toISOString(),
+        verification_method: 'signature',
+        event_type: event.type,
+        event_id: event.id,
+      },
+    });
   } catch (error: any) {
     console.error('Webhook handler error:', error);
     return NextResponse.json(

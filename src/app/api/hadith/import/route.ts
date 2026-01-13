@@ -1,6 +1,7 @@
 /**
  * API Route: Import Hadith (Gated)
  * Constitutional gate: Only scholars, moderators, and admins can import
+ * ✅ RETROFITTED: TruthSerum proof metadata enabled
  */
 
 import { gateAction, writeReceipt } from '@/lib/qbos/truth';
@@ -100,6 +101,13 @@ export async function POST(req: NextRequest) {
       success: true,
       data: hadith as Hadith,
       receiptId: receipt.id,
+      _proof: {
+        operation: 'IMPORT_HADITH',
+        verified_at: new Date().toISOString(),
+        verification_method: 'constitutional_gate',
+        hadith_id: hadith.id,
+        source_id: body.source_id,
+      },
     });
   } catch (error) {
     console.error('Hadith import error:', error);

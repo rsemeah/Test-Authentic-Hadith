@@ -91,4 +91,10 @@ export interface ApiResponse<T> {
   data?: T;
   error?: string;
   receiptId?: string;
+  _proof?: {
+    operation: string;
+    verified_at: string;
+    verification_method: string;
+    [key: string]: any;
+  };
 }

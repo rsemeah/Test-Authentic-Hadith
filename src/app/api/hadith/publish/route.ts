@@ -2,6 +2,7 @@
  * API Route: Publish Hadith (Gated)
  * Constitutional gate: Only moderators and admins can publish
  * Requires minimum 2 verifications
+ * ✅ RETROFITTED: TruthSerum proof metadata enabled
  */
 
 import { gateAction, writeReceipt } from '@/lib/qbos/truth';
@@ -124,6 +125,13 @@ export async function POST(req: NextRequest) {
       success: true,
       data: published as Hadith,
       receiptId: receipt.id,
+      _proof: {
+        operation: 'PUBLISH_HADITH',
+        verified_at: new Date().toISOString(),
+        verification_method: 'constitutional_gate',
+        hadith_id: hadith_id,
+        verification_count: verificationCount,
+      },
     });
   } catch (error) {
     console.error('Publish error:', error);

@@ -1,6 +1,7 @@
 /**
  * GET /api/hadith/topics
  * Get all unique topics across hadith
+ * ✅ RETROFITTED: TruthSerum proof metadata enabled
  */
 
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
@@ -36,6 +37,12 @@ export async function GET() {
     return NextResponse.json({
       topics,
       count: topics.length,
+      _proof: {
+        operation: 'READ_TOPICS',
+        verified_at: new Date().toISOString(),
+        verification_method: 'list',
+        topics_count: topics.length,
+      },
     });
   } catch (error: any) {
     console.error('Topics fetch error:', error);
