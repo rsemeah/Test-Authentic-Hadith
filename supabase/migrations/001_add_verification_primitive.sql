@@ -4,24 +4,24 @@
 
 BEGIN;
 
--- Add verification JSONB column to hadith table
-ALTER TABLE IF EXISTS hadith 
+-- Note: base table is named "hadiths" in the initial schema
+ALTER TABLE IF EXISTS hadiths 
 ADD COLUMN IF NOT EXISTS verification JSONB NOT NULL DEFAULT '{}'::jsonb;
 
 -- Create index for verification hash lookups (fast access to hadith by hash)
 CREATE INDEX IF NOT EXISTS idx_hadith_verification_hash 
-ON hadith ((verification->>'content_hash'));
+ON hadiths ((verification->>'content_hash'));
 
 -- Create index for verification timestamp (fast chronological queries)
 CREATE INDEX IF NOT EXISTS idx_hadith_verification_status 
-ON hadith ((verification->>'verified_at'));
+ON hadiths ((verification->>'verified_at'));
 
 -- Create index for verification method (filter by how hadith was verified)
 CREATE INDEX IF NOT EXISTS idx_hadith_verification_method 
-ON hadith ((verification->>'verification_method'));
+ON hadiths ((verification->>'verification_method'));
 
 -- Add constraint: verification must be complete (has required fields)
-ALTER TABLE hadith
+ALTER TABLE hadiths
 ADD CONSTRAINT verification_complete CHECK (
   verification ? 'content_hash' AND
   verification ? 'source_id' AND

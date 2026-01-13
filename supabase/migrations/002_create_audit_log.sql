@@ -6,10 +6,11 @@ BEGIN;
 
 -- Create audit_log table (append-only, immutable)
 CREATE TABLE IF NOT EXISTS audit_log (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id UUID NOT NULL DEFAULT gen_random_uuid(),
   receipt JSONB NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  partition_key DATE NOT NULL DEFAULT CURRENT_DATE
+  partition_key DATE NOT NULL DEFAULT CURRENT_DATE,
+  PRIMARY KEY (id, partition_key)
 ) PARTITION BY RANGE (partition_key);
 
 -- Create partitions for current month and next month
