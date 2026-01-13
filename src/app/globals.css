@@ -1,0 +1,341 @@
+@import url("https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Playfair+Display:wght@400;700&display=swap");
+
+@layer base {
+  :root {
+    /* Color Palette - Islamic Design System */
+    --gold: #d4af37;
+    --gold-dark: #8a6e3a;
+    --emerald-green: #1b5e43;
+    --emerald-bright: #2d7a5b;
+    --marble-white: #f8f6f2;
+    --marble-grey: #d4cfc7;
+
+    /* Backgrounds */
+    --islamic-dark: #0a0a0a;
+    --islamic-darker: #0f0f0f;
+    --islamic-bg-secondary: #151515;
+
+    /* Text Colors */
+    --text-primary: #f1f1f1;
+    --text-secondary: #a0a0a0;
+    --text-muted: #666666;
+
+    /* Borders */
+    --border-dark: #282828;
+    --border-light: #3a3a3a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-islamic-dark text-text-primary;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Typography */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-playfair;
+  }
+
+  /* Links */
+  a {
+    @apply text-gold hover:text-gold/80 transition-colors;
+  }
+
+  /* Selection */
+  ::selection {
+    @apply bg-gold text-islamic-dark;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-islamic-dark;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gold/50 rounded-full hover:bg-gold/70;
+  }
+}
+
+@layer components {
+  /* Buttons */
+  .btn-gold {
+    @apply px-4 py-2 bg-gradient-to-r from-gold to-gold/80 hover:from-gold/90 hover:to-gold/70 text-islamic-dark font-semibold rounded-lg transition;
+  }
+
+  .btn-emerald {
+    @apply px-4 py-2 bg-gradient-to-r from-emerald-green to-emerald-bright hover:from-emerald-green/90 hover:to-emerald-bright/80 text-white font-semibold rounded-lg transition;
+  }
+
+  .btn-outline {
+    @apply px-4 py-2 border border-gold text-gold hover:bg-gold/10 rounded-lg transition;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-islamic-darker rounded-lg border border-border-dark p-6;
+  }
+
+  .card-hover {
+    @apply card hover:border-gold/50 transition;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-block px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .badge-gold {
+    @apply badge bg-gold/20 text-gold;
+  }
+
+  .badge-emerald {
+    @apply badge bg-emerald-green/20 text-emerald-bright;
+  }
+
+  .badge-sahih {
+    @apply badge bg-emerald-green/20 text-emerald-bright;
+  }
+
+  .badge-hasan {
+    @apply badge bg-blue-500/20 text-blue-400;
+  }
+
+  .badge-daif {
+    @apply badge bg-yellow-500/20 text-yellow-400;
+  }
+
+  /* Input Fields */
+  .input-base {
+    @apply w-full px-4 py-3 bg-islamic-darker border border-border-light rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition;
+  }
+
+  /* Arabic Typography */
+  .font-arabic {
+    @apply font-amiri;
+    direction: rtl;
+  }
+
+  /* Decorative Elements */
+  .divider-gold {
+    @apply border-t-2 border-gold/20;
+  }
+
+  .divider-emerald {
+    @apply border-t-2 border-emerald-green/20;
+  }
+
+  /* Loading States */
+  .animate-pulse-gold {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(212, 175, 55, 0.2),
+      transparent
+    );
+    background-size: 200% 100%;
+  }
+
+  /* Shadows */
+  .shadow-gold {
+    @apply shadow-lg shadow-gold/10;
+  }
+
+  .shadow-emerald {
+    @apply shadow-lg shadow-emerald-green/10;
+  }
+
+  /* Gradients */
+  .gradient-gold {
+    @apply bg-gradient-to-br from-gold via-gold/80 to-gold-dark;
+  }
+
+  .gradient-emerald {
+    @apply bg-gradient-to-br from-emerald-bright via-emerald-green to-emerald-green/80;
+  }
+
+  .gradient-dark {
+    @apply bg-gradient-to-br from-islamic-dark to-islamic-darker;
+  }
+
+  /* Focus States */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-gold/50 focus:ring-offset-2 focus:ring-offset-islamic-dark;
+  }
+
+  /* Disabled State */
+  .disabled-state {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  /* Overlay */
+  .overlay {
+    @apply absolute inset-0 bg-black/40;
+  }
+
+  /* Geometric Patterns */
+  .pattern-stars {
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(212, 175, 55, 0.03) 10px,
+      rgba(212, 175, 55, 0.03) 20px
+    );
+  }
+
+  /* Text Utilities */
+  .text-gold {
+    @apply text-gold;
+  }
+
+  .text-emerald {
+    @apply text-emerald-bright;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-gold to-emerald-bright bg-clip-text text-transparent;
+  }
+
+  /* Responsive Grid */
+  .grid-responsive {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+}
+
+@layer utilities {
+  /* Colors */
+  .gold {
+    @apply text-gold;
+  }
+  .bg-gold {
+    @apply bg-gold;
+  }
+  .border-gold {
+    @apply border-gold;
+  }
+
+  .emerald {
+    @apply text-emerald-bright;
+  }
+  .bg-emerald {
+    @apply bg-emerald-green;
+  }
+
+  .islamic-dark {
+    @apply bg-islamic-dark;
+  }
+  .islamic-darker {
+    @apply bg-islamic-darker;
+  }
+
+  /* Typography */
+  .font-playfair {
+    @apply font-playfair;
+  }
+  .font-amiri {
+    @apply font-amiri;
+  }
+
+  /* Layout */
+  .container-max {
+    @apply max-w-7xl mx-auto;
+  }
+
+  /* Spacing */
+  .space-gold {
+    @apply space-y-6;
+  }
+
+  /* Display */
+  .hidden-mobile {
+    @apply hidden md:block;
+  }
+  .visible-mobile {
+    @apply block md:hidden;
+  }
+}
+
+/* Animation Keyframes */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Print Styles */
+@media print {
+  body {
+    @apply bg-white text-black;
+  }
+
+  .no-print {
+    @apply hidden;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: more) {
+  :root {
+    --gold: #ffd700;
+    --emerald-green: #00a86b;
+    --text-primary: #ffffff;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
