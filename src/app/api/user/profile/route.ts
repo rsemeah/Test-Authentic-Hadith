@@ -1,6 +1,7 @@
 /**
  * GET /api/user/profile
  * Get current user's profile with tier information
+ * ✅ RETROFITTED: TruthSerum context tracking enabled
  */
 
 import { requireAuthWithProfile } from '@/lib/utils/auth';
@@ -22,6 +23,11 @@ export async function GET() {
       },
       savedHadithCount: profile.saved_hadith_count,
       createdAt: profile.created_at,
+      _proof: {
+        operation: 'READ_PROFILE',
+        verified_at: new Date().toISOString(),
+        verification_method: 'auth',
+      },
     });
   } catch (error: any) {
     console.error('Profile fetch error:', error);

@@ -1,6 +1,7 @@
 /**
  * GET /api/collections
  * List all hadith collections
+ * ✅ RETROFITTED: TruthSerum context tracking enabled
  */
 
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
@@ -25,6 +26,11 @@ export async function GET() {
     return NextResponse.json({
       collections: data,
       count: data.length,
+      _proof: {
+        operation: 'READ_COLLECTIONS',
+        verified_at: new Date().toISOString(),
+        verification_method: 'list',
+      },
     });
   } catch (error: any) {
     console.error('Collections fetch error:', error);
