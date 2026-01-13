@@ -15,6 +15,9 @@ export async function POST(request: NextRequest) {
   try {
     // Get user from session
     const authHeader = request.headers.get('Authorization');
+    const userId = request.headers.get('x-user-id');
+    const sessionId = request.headers.get('x-session-id');
+    
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -25,8 +28,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
 
-    // Run SafetyEngine first
-    const safetyCheck = SafetyEngine.evaluate(message);
+    // Run SafetyEngine with logging to database
+    const safetyCheck = await SafetyEngine.evaluateAndLog(
+      message,
+      userId || undefined,
+      sessionId || undefined
+    );
+    
     if (!safetyCheck.allowed) {
       return NextResponse.json(
         { error: 'Your query violates our safety policies' },
@@ -65,6 +73,7 @@ export async function POST(request: NextRequest) {
         verified_at: new Date().toISOString(),
         verification_method: 'safety_checked',
         safety_decision: safetyCheck.allowed ? 'ALLOW' : 'BLOCK',
+        safety_decision_id: safetyCheck.decisionId,
         model: 'gpt-3.5-turbo',
         tokens_used: completion.usage?.total_tokens || 0,
       }

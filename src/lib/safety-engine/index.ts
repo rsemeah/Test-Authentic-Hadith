@@ -191,7 +191,7 @@ export const SAFE_RESPONSES: Record<SafetyCategory, string> = {
  */
 export class SafetyEngine {
   /**
-   * Evaluate query against all safety patterns
+   * Evaluate query against all safety patterns (synchronous)
    * @param query - User's input text
    * @returns Safety result with allowed flag and optional category/response
    */
@@ -226,6 +226,77 @@ export class SafetyEngine {
 
     // No patterns matched - query is safe
     return { allowed: true };
+  }
+
+  /**
+   * Evaluate query AND log decision to database (async)
+   * CRITICAL: Always call this instead of evaluate() in route handlers
+   * to ensure all safety checks are recorded for audit trails
+   * @param query - User's input text
+   * @param userId - Optional user ID for tracking
+   * @param sessionId - Optional session ID for tracking
+   * @returns Safety result with allowed flag and database ID
+   */
+  static async evaluateAndLog(
+    query: string,
+    userId?: string,
+    sessionId?: string
+  ): Promise<SafetyResult & { decisionId?: string }> {
+    // Get synchronous evaluation result
+    const result = this.evaluate(query);
+
+    try {
+      // Import dynamically to avoid circular dependency
+      const { storeSafetyDecision } = await import('@/lib/truthserum/db');
+      
+      // Create query hash for duplicate detection
+      const crypto = require('crypto');
+      const queryHash = crypto
+        .createHash('sha256')
+        .update(query.trim())
+        .digest('hex');
+
+      // Count patterns for this query
+      const patternsMatched = [];
+      let totalPatternsChecked = 0;
+
+      for (const [category, patterns] of Object.entries(MICRO_PATTERNS)) {
+        totalPatternsChecked += patterns.length;
+        
+        // If result blocked in this category, add pattern details
+        if (result.category === category) {
+          for (const pattern of patterns) {
+            if (pattern.test(query.trim())) {
+              patternsMatched.push({
+                category,
+                pattern: pattern.source,
+                matched: true,
+              });
+            }
+          }
+        }
+      }
+
+      // Log the decision to database
+      const decisionId = await storeSafetyDecision(
+        query,
+        queryHash,
+        result.allowed ? 'allowed' : 'blocked',
+        patternsMatched,
+        totalPatternsChecked,
+        userId,
+        sessionId
+      );
+
+      return {
+        ...result,
+        decisionId,
+      };
+    } catch (error) {
+      // Log to console but don't throw - safety check shouldn't fail the request
+      console.error('Failed to log safety decision:', error);
+      return result;
+    }
   }
 
   /**
