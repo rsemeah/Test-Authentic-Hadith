@@ -1,5 +1,6 @@
 /**
  * API Route: Health Check & QBos Connection Status
+ * ✅ RETROFITTED: TruthSerum proof metadata enabled
  */
 
 import { checkQBosConnection } from '@/lib/qbos/truth';
@@ -25,7 +26,13 @@ export async function GET() {
     const { error } = await supabase.from('users').select('id').limit(1);
     health.services.supabase = !error;
 
-    return NextResponse.json(health);
+    return NextResponse.json({
+      ...health,
+      _proof: {
+        operation: 'HEALTH_CHECK',
+        verified_at: new Date().toISOString(),
+      }
+    });
   } catch (error) {
     console.error('Health check error:', error);
     return NextResponse.json(

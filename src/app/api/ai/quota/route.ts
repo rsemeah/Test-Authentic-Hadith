@@ -1,6 +1,7 @@
 /**
  * GET /api/ai/quota
  * Get user's AI query quota status
+ * ✅ RETROFITTED: TruthSerum proof metadata enabled
  */
 
 import { requireAuthWithProfile } from '@/lib/utils/auth';
@@ -24,6 +25,12 @@ export async function GET() {
       resetsAt: quotaStatus.resetsAt,
       tier: quotaStatus.tier,
       allowed: quotaStatus.allowed,
+      _proof: {
+        operation: 'CHECK_QUOTA',
+        verified_at: new Date().toISOString(),
+        verification_method: 'auth',
+        user_tier: quotaStatus.tier,
+      }
     });
   } catch (error: any) {
     console.error('Quota check error:', error);

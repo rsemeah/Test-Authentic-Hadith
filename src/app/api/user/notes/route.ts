@@ -1,3 +1,8 @@
+/**
+ * GET/POST /api/user/notes
+ * Manage user study notes on hadith
+ * ✅ RETROFITTED: TruthSerum proof metadata enabled
+ */
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -22,7 +27,14 @@ export async function GET(request: NextRequest) {
 
     if (error) throw error;
 
-    return NextResponse.json({ notes: notes || [] });
+    return NextResponse.json({ 
+      notes: notes || [],
+      _proof: {
+        operation: 'READ_NOTES',
+        verified_at: new Date().toISOString(),
+        verification_method: 'auth',
+      }
+    });
   } catch (error) {
     console.error('Failed to fetch notes:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -56,7 +68,14 @@ export async function POST(request: NextRequest) {
 
     if (error) throw error;
 
-    return NextResponse.json({ note: note?.[0] }, { status: 201 });
+    return NextResponse.json({ 
+      note: note?.[0],
+      _proof: {
+        operation: 'CREATE_NOTE',
+        verified_at: new Date().toISOString(),
+        verification_method: 'auth',
+      }
+    }, { status: 201 });
   } catch (error) {
     console.error('Failed to create note:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

@@ -1,3 +1,8 @@
+/**
+ * POST /api/ai/chat
+ * AI chat with safety checking and proof metadata
+ * ✅ RETROFITTED: TruthSerum proof metadata enabled
+ */
 import SafetyEngine from '@/lib/safety-engine';
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
@@ -21,8 +26,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Run SafetyEngine first
-    const safetyCheck = SafetyEngine.checkQuery(message);
-    if (!safetyCheck.isAllowed) {
+    const safetyCheck = SafetyEngine.evaluate(message);
+    if (!safetyCheck.allowed) {
       return NextResponse.json(
         { error: 'Your query violates our safety policies' },
         { status: 400 }
@@ -53,7 +58,17 @@ export async function POST(request: NextRequest) {
 
     const response = completion.choices[0].message.content || '';
 
-    return NextResponse.json({ response });
+    return NextResponse.json({ 
+      response,
+      _proof: {
+        operation: 'AI_CHAT',
+        verified_at: new Date().toISOString(),
+        verification_method: 'safety_checked',
+        safety_decision: safetyCheck.allowed ? 'ALLOW' : 'BLOCK',
+        model: 'gpt-3.5-turbo',
+        tokens_used: completion.usage?.total_tokens || 0,
+      }
+    });
   } catch (error) {
     console.error('Failed to process AI chat:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

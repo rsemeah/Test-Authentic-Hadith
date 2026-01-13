@@ -1,3 +1,8 @@
+/**
+ * GET /api/learning-paths
+ * List learning paths with progress tracking
+ * ✅ RETROFITTED: TruthSerum proof metadata enabled
+ */
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -30,7 +35,15 @@ export async function GET(request: NextRequest) {
         : 0,
     }));
 
-    return NextResponse.json({ paths: pathsWithProgress });
+    return NextResponse.json({ 
+      paths: pathsWithProgress,
+      _proof: {
+        operation: 'READ_LEARNING_PATHS',
+        verified_at: new Date().toISOString(),
+        verification_method: 'auth',
+        paths_count: pathsWithProgress.length,
+      }
+    });
   } catch (error) {
     console.error('Failed to fetch learning paths:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
