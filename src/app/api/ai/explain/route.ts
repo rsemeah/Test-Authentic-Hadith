@@ -37,6 +37,10 @@ export const POST = withTruthSerum(
     // 1. Require authentication
     const { user, profile } = await requireAuthWithProfile();
 
+    // 1.5. Extract user context for audit logging
+    const userId = request.headers.get('x-user-id') || user.id;
+    const sessionId = request.headers.get('x-session-id') || undefined;
+
     // 2. Parse request
     const { hadithId, query }: ExplainRequest = await request.json();
 
@@ -47,8 +51,8 @@ export const POST = withTruthSerum(
       );
     }
 
-    // 3. CRITICAL: SafetyEngine check (before anything else)
-    const safetyCheck = SafetyEngine.evaluate(query);
+    // 3. CRITICAL: SafetyEngine check with audit logging (before anything else)
+    const safetyCheck = await SafetyEngine.evaluateAndLog(query, userId, sessionId);
     if (!safetyCheck.allowed) {
       return NextResponse.json(
         {
@@ -217,6 +221,11 @@ Provide an educational explanation focusing on context and meaning, not rulings.
         explanation_hash: verifiedExplanation.explanation_hash,
         sources_verified: true,
         proof_receipt_id: receipt.receipt_id,
+      },
+      _proof: {
+        safety_decision_id: safetyCheck.decisionId,
+        user_id: userId,
+        timestamp: new Date().toISOString(),
       },
     });
   }
